@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Wiesoo Financeiro</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 32px;
+        }
+
+        .btn-voltar {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 10px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .btn-voltar:hover {
+            background: white;
+            color: #667eea;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            border-radius: 15px;
+            padding: 25px;
+            color: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h3 {
+            font-size: 14px;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+
+        .card p {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .card-receitas {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+        }
+
+        .card-despesas {
+            background: linear-gradient(135deg, #f44336 0%, #da190b 100%);
+        }
+
+        .card-saldo {
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+        }
+
+        .card-pago {
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+        }
+
+        .card-nao-pago {
+            background: linear-gradient(135deg, #f44336 0%, #C62828 100%);
+        }
+
+        .card-pendente {
+            background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+        }
+
+        .card-pessoal {
+            background: linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%);
+        }
+
+        .charts-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .chart-container {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .chart-container h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        .alert-section {
+            background: #fff3cd;
+            border: 3px solid #ffc107;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .alert-section h3 {
+            color: #856404;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .alert-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .alert-section li {
+            padding: 10px 0;
+            color: #856404;
+            font-size: 16px;
+        }
+
+        .alert-section li::before {
+            content: "⚠️ ";
+            margin-right: 10px;
+        }
+
+        .info-section {
+            background: linear-gradient(135deg, #e8ecff 0%, #f8f9ff 100%);
+            border: 3px solid #667eea;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .info-section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .info-section p {
+            color: #666;
+            line-height: 1.8;
+        }
+
+        .parcelas-pendentes {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .parcelas-pendentes h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .parcela-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 5px solid #f44336;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .parcela-item:hover {
+            background: #e8ecff;
+        }
+
+        .parcela-info {
+            flex: 1;
+        }
+
+        .parcela-info strong {
+            color: #333;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .parcela-info span {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .parcela-valor {
+            font-size: 20px;
+            font-weight: bold;
+            color: #f44336;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Dashboard</h1>
+            <a href="index.html" class="btn-voltar">← Voltar ao Menu</a>
+        </div>
+
+        <div class="content">
+            <!-- Cards Principais -->
+            <h2 style="color: #667eea; margin-bottom: 20px;">💰 Visão Geral Financeira</h2>
+            <div class="cards-grid">
+                <div class="card card-receitas">
+                    <h3>💰 Total Receitas (Pagas)</h3>
+                    <p id="totalReceitas">R$ 0,00</p>
+                </div>
+                <div class="card card-despesas">
+                    <h3>💸 Total Despesas (Pagas)</h3>
+                    <p id="totalDespesas">R$ 0,00</p>
+                </div>
+                <div class="card card-saldo">
+                    <h3>💎 Saldo (Lucro/Prejuízo)</h3>
+                    <p id="saldo">R$ 0,00</p>
+                </div>
+            </div>
+
+            <!-- Cards de Status -->
+            <h2 style="color: #667eea; margin-bottom: 20px; margin-top: 30px;">📋 Status dos Pagamentos</h2>
+            <div class="cards-grid">
+                <div class="card card-pago">
+                    <h3>✅ Total Pago</h3>
+                    <p id="totalPago">R$ 0,00</p>
+                </div>
+                <div class="card card-nao-pago">
+                    <h3>❌ Total Não Pago</h3>
+                    <p id="totalNaoPago">R$ 0,00</p>
+                </div>
+                <div class="card card-pendente">
+                    <h3>⏳ Total Pendente</h3>
+                    <p id="totalPendente">R$ 0,00</p>
+                </div>
+                <div class="card card-pessoal">
+                    <h3>👥 Despesas Pessoais</h3>
+                    <p id="gastosPessoais">R$ 0,00</p>
+                </div>
+            </div>
+
+            <!-- Alertas -->
+            <div id="alertasSection"></div>
+
+            <!-- Parcelas Pendentes -->
+            <div id="parcelasPendentesSection"></div>
+
+            <!-- Gráficos -->
+            <div class="charts-section">
+                <div class="chart-container">
+                    <h3>📊 Receitas vs Despesas (Pagas)</h3>
+                    <canvas id="chartReceitasDespesas"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3>📈 Status dos Lançamentos</h3>
+                    <canvas id="chartStatus"></canvas>
+                </div>
+            </div>
+
+            <div class="charts-section">
+                <div class="chart-container" style="grid-column: 1 / -1;">
+                    <h3>📉 Evolução Mensal (Apenas Pagos)</h3>
+                    <canvas id="chartEvolucao"></canvas>
+                </div>
+            </div>
+
+            <!-- Informações -->
+            <div class="info-section">
+                <h3>💡 Resumo da Situação Financeira</h3>
+                <p id="resumoTexto">Carregando dados...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        let config = null;
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            config = await carregarConfig();
+            await carregarDashboard();
+        });
+
+        async function carregarDashboard() {
+            // Carregar dados nos cards
+            const receitas = calcularTotalReceitas(1); // Apenas pagas
+            const despesas = calcularTotalDespesas(1); // Apenas pagas
+            const saldo = receitas - despesas;
+            const gastosPessoais = calcularGastosPessoais();
+
+            // Status
+            const totalPago = calcularTotalReceitas(1) + calcularTotalDespesas(1);
+            const totalNaoPago = calcularTotalAPagar() + calcularTotalAReceber();
+            const totalPendente = obterLancamentosPorStatus(3).reduce((sum, l) => sum + Math.abs(l.valor), 0);
+
+            document.getElementById('totalReceitas').textContent = formatarReal(receitas);
+            document.getElementById('totalDespesas').textContent = formatarReal(despesas);
+            document.getElementById('saldo').textContent = formatarReal(saldo);
+            document.getElementById('gastosPessoais').textContent = formatarReal(gastosPessoais);
+
+            document.getElementById('totalPago').textContent = formatarReal(totalPago);
+            document.getElementById('totalNaoPago').textContent = formatarReal(totalNaoPago);
+            document.getElementById('totalPendente').textContent = formatarReal(totalPendente);
+
+            // Carregar alertas
+            await carregarAlertas(saldo, gastosPessoais, totalNaoPago);
+
+            // Carregar parcelas pendentes
+            await carregarParcelasPendentes();
+
+            // Carregar gráficos
+            criarGraficoReceitasDespesas(receitas, despesas);
+            await criarGraficoStatus();
+            criarGraficoEvolucao();
+
+            // Resumo textual
+            gerarResumoTextual(receitas, despesas, saldo, gastosPessoais, totalNaoPago);
+        }
+
+        async function carregarAlertas(saldo, gastosPessoais, totalNaoPago) {
+            const alertas = [];
+
+            if (saldo < 0) {
+                alertas.push('PREJUÍZO! A empresa está gastando mais do que recebe (considerando apenas pagamentos realizados)!');
+            }
+
+            if (totalNaoPago > 5000) {
+                alertas.push(`Você tem R$ ${formatarReal(totalNaoPago)} em contas não pagas! Fique atento aos vencimentos.`);
+            }
+
+            if (gastosPessoais > 1500) {
+                alertas.push(`Despesas pessoais de R$ ${formatarReal(gastosPessoais)} - considere estabelecer um limite mensal!`);
+            }
+
+            const receitas = calcularTotalReceitas(1);
+            if (receitas > 0 && (7000 / receitas) > 0.3) {
+                alertas.push('Empréstimo comprometendo mais de 30% do faturamento!');
+            }
+
+            if (alertas.length > 0) {
+                const section = document.getElementById('alertasSection');
+                section.innerHTML = `
+                    <div class="alert-section">
+                        <h3>🚨 Alertas Importantes</h3>
+                        <ul>
+                            ${alertas.map(a => `<li>${a}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+        }
+
+        async function carregarParcelasPendentes() {
+            const naoPagos = obterLancamentosPorStatus(2);
+            const parcelas = naoPagos.filter(l => l.parcelas && l.parcelas.numero);
+
+            if (parcelas.length > 0) {
+                const section = document.getElementById('parcelasPendentesSection');
+                let html = `
+                    <div class="parcelas-pendentes">
+                        <h3>📅 Parcelas Não Pagas (${parcelas.length})</h3>
+                `;
+
+                // Ordenar por data
+                parcelas.sort((a, b) => new Date(a.data) - new Date(b.data));
+
+                for (const p of parcelas.slice(0, 10)) {
+                    const categoria = await obterCategoriaPorId(p.categoriaId);
+                    html += `
+                        <div class="parcela-item">
+                            <div class="parcela-info">
+                                <strong>${p.descricao}</strong>
+                                <span>${formatarData(p.data)} | ${categoria ? categoria.nome : 'N/A'}</span>
+                            </div>
+                            <div class="parcela-valor">${formatarReal(p.valor)}</div>
+                        </div>
+                    `;
+                }
+
+                if (parcelas.length > 10) {
+                    html += `<p style="text-align: center; color: #999; margin-top: 15px;">E mais ${parcelas.length - 10} parcelas...</p>`;
+                }
+
+                html += '</div>';
+                section.innerHTML = html;
+            }
+        }
+
+        function criarGraficoReceitasDespesas(receitas, despesas) {
+            const ctx = document.getElementById('chartReceitasDespesas').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Receitas', 'Despesas'],
+                    datasets: [{
+                        data: [receitas, despesas],
+                        backgroundColor: ['#4CAF50', '#f44336'],
+                        borderWidth: 3,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: {
+                                    size: 14
+                                },
+                                padding: 20
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        async function criarGraficoStatus() {
+            const statusPago = await obterStatusPorId(1);
+            const statusNaoPago = await obterStatusPorId(2);
+            const statusPendente = await obterStatusPorId(3);
+
+            const pagos = obterLancamentosPorStatus(1);
+            const naoPagos = obterLancamentosPorStatus(2);
+            const pendentes = obterLancamentosPorStatus(3);
+
+            const ctx = document.getElementById('chartStatus').getContext('2d');
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: [
+                        `${statusPago.icone} ${statusPago.nome}`,
+                        `${statusNaoPago.icone} ${statusNaoPago.nome}`,
+                        `${statusPendente.icone} ${statusPendente.nome}`
+                    ],
+                    datasets: [{
+                        data: [pagos.length, naoPagos.length, pendentes.length],
+                        backgroundColor: [statusPago.cor, statusNaoPago.cor, statusPendente.cor],
+                        borderWidth: 3,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: {
+                                    size: 14
+                                },
+                                padding: 20
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function criarGraficoEvolucao() {
+            const porMes = agruparPorMes();
+            const meses = Object.keys(porMes).sort();
+
+            const ctx = document.getElementById('chartEvolucao').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: meses.map(m => formatarMes(m)),
+                    datasets: [
+                        {
+                            label: 'Receitas',
+                            data: meses.map(m => porMes[m].receitas),
+                            borderColor: '#4CAF50',
+                            backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'Despesas',
+                            data: meses.map(m => porMes[m].despesas),
+                            borderColor: '#f44336',
+                            backgroundColor: 'rgba(244, 67, 54, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'Despesas Pessoais',
+                            data: meses.map(m => porMes[m].gastosPessoais),
+                            borderColor: '#FF9800',
+                            backgroundColor: 'rgba(255, 152, 0, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: {
+                                    size: 14
+                                },
+                                padding: 20
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'R$ ' + value.toLocaleString('pt-BR');
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function gerarResumoTextual(receitas, despesas, saldo, gastosPessoais, totalNaoPago) {
+            const emprestimo = 7000;
+            const faturamentoEsperado = 28000;
+            
+            let texto = '';
+
+            if (receitas === 0) {
+                texto = '📝 Ainda não há lançamentos pagos registrados. Comece adicionando suas receitas e despesas!';
+            } else {
+                texto = `📊 <strong>Análise Financeira (Apenas Valores Pagos):</strong><br><br>`;
+                
+                texto += `Sua empresa recebeu <strong>${formatarReal(receitas)}</strong> e gastou <strong>${formatarReal(despesas)}</strong>. `;
+                
+                if (saldo > 0) {
+                    texto += `O saldo é <strong style="color: #4CAF50;">POSITIVO em ${formatarReal(saldo)}</strong> - parabéns! 🎉<br><br>`;
+                } else {
+                    texto += `O saldo é <strong style="color: #f44336;">NEGATIVO em ${formatarReal(Math.abs(saldo))}</strong> - atenção! ⚠️<br><br>`;
+                }
+
+                if (totalNaoPago > 0) {
+                    texto += `⚠️ Você ainda tem <strong>${formatarReal(totalNaoPago)}</strong> em contas não pagas. Fique atento aos vencimentos!<br><br>`;
+                }
+
+                if (gastosPessoais > 0) {
+                    texto += `Despesas pessoais totalizaram <strong>${formatarReal(gastosPessoais)}</strong>. `;
+                    if (gastosPessoais > 1500) {
+                        texto += `<strong style="color: #f44336;">Isso está alto!</strong> `;
+                    }
+                    texto += `Este valor precisa ser devolvido ou considerado como retirada.<br><br>`;
+                }
+
+                const comprometimentoEmprestimo = (emprestimo / receitas * 100).toFixed(1);
+                texto += `O empréstimo de <strong>${formatarReal(emprestimo)}</strong>/mês representa <strong>${comprometimentoEmprestimo}%</strong> do faturamento pago. `;
+                
+                if (comprometimentoEmprestimo > 30) {
+                    texto += `<strong style="color: #f44336;">Isso é alto!</strong> Tente aumentar as receitas ou renegociar.<br><br>`;
+                } else {
+                    texto += `Isso está controlado. ✅<br><br>`;
+                }
+
+                if (receitas < faturamentoEsperado * 0.8) {
+                    texto += `⚠️ O faturamento está abaixo da meta de ${formatarReal(faturamentoEsperado)}/mês. Busque novos clientes!`;
+                } else if (receitas >= faturamentoEsperado) {
+                    texto += `🎯 Faturamento atingiu ou superou a meta! Continue assim!`;
+                }
+            }
+
+            document.getElementById('resumoTexto').innerHTML = texto;
+        }
+    </script>
+</body>
+</html>

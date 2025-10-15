@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wiesoo Financeiro - Sistema de Controle</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 1000px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 18px;
+            opacity: 0.95;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .menu-item {
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8ecff 100%);
+            border: 3px solid #667eea;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .menu-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102,126,234,0.3);
+            border-color: #764ba2;
+        }
+
+        .menu-item .icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .menu-item h3 {
+            color: #667eea;
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+
+        .menu-item p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .alert-box {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .alert-box h3 {
+            margin-bottom: 10px;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            border-top: 3px solid #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💼 Wiesoo Financeiro</h1>
+            <p>Sistema de Controle Financeiro Profissional</p>
+        </div>
+
+        <div class="content">
+            <div class="alert-box">
+                <h3>✅ Sistema Pronto para Usar!</h3>
+                <p>Clique em qualquer opção abaixo para começar</p>
+            </div>
+
+            <div class="menu-grid">
+                <a href="dashboard.html" class="menu-item">
+                    <div class="icon">📊</div>
+                    <h3>Dashboard</h3>
+                    <p>Visão geral com gráficos e indicadores principais</p>
+                </a>
+
+                <a href="lancamentos.html" class="menu-item">
+                    <div class="icon">➕</div>
+                    <h3>Lançamentos</h3>
+                    <p>Adicionar, editar e gerenciar receitas e despesas</p>
+                </a>
+
+                <a href="relatorios.html" class="menu-item">
+                    <div class="icon">📈</div>
+                    <h3>Relatórios</h3>
+                    <p>Resumos mensais e análises detalhadas</p>
+                </a>
+
+                <a href="emprestimo.html" class="menu-item">
+                    <div class="icon">💳</div>
+                    <h3>Empréstimo</h3>
+                    <p>Controle do empréstimo e histórico de pagamentos</p>
+                </a>
+
+                <a href="despesas-pessoais.html" class="menu-item">
+                    <div class="icon">👥</div>
+                    <h3>Despesas Pessoais</h3>
+                    <p>Relatório de despesas pessoais dos sócios</p>
+                </a>
+
+                <a href="config.html" class="menu-item">
+                    <div class="icon">⚙️</div>
+                    <h3>Configurações</h3>
+                    <p>Backup, restauração e configurações gerais</p>
+                </a>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p><strong>💡 Dica:</strong> Todos os dados são salvos automaticamente no arquivo <strong>dados.json</strong></p>
+            <p style="margin-top: 10px; font-size: 12px;">Versão 1.0 - Wiesoo © 2025</p>
+        </div>
+    </div>
+</body>
+</html>
