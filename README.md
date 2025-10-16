@@ -79,7 +79,6 @@ sistema/
 ├── dashboard.html          # Visão geral financeira
 ├── relatorios.html         # Relatórios detalhados
 ├── despesas-pessoais.html  # Controle de gastos pessoais
-├── emprestimo.html         # Controle de empréstimos
 ├── config.html             # Configurações do sistema
 ├── script.js               # ⚙️ ARQUIVO DE CONFIGURAÇÃO
 └── README.md               # Este arquivo

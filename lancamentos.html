@@ -183,6 +183,28 @@
             padding: 15px;
             text-align: left;
             font-weight: bold;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.3s;
+        }
+
+        th:hover {
+            background: #5568d3;
+        }
+
+        th.sortable::after {
+            content: ' ⇅';
+            opacity: 0.5;
+        }
+
+        th.sorted-asc::after {
+            content: ' ▲';
+            opacity: 1;
+        }
+
+        th.sorted-desc::after {
+            content: ' ▼';
+            opacity: 1;
         }
 
         td {
@@ -404,13 +426,13 @@
                     <table id="tabelaLancamentos">
                         <thead>
                             <tr>
-                                <th>Data</th>
-                                <th>Descrição</th>
-                                <th>Categoria</th>
-                                <th>Vencimento</th>
-                                <th>Valor</th>
-                                <th>Tipo</th>
-                                <th>Status</th>
+                                <th class="sortable" onclick="ordenarTabela('data')">Data</th>
+                                <th class="sortable" onclick="ordenarTabela('descricao')">Descrição</th>
+                                <th class="sortable" onclick="ordenarTabela('categoria')">Categoria</th>
+                                <th class="sortable" onclick="ordenarTabela('vencimento')">Vencimento</th>
+                                <th class="sortable" onclick="ordenarTabela('valor')">Valor</th>
+                                <th class="sortable" onclick="ordenarTabela('tipo')">Tipo</th>
+                                <th class="sortable" onclick="ordenarTabela('status')">Status</th>
                                 <th>Ações</th>
                             </tr>
                         </thead>
@@ -426,6 +448,7 @@
     <script src="script.js"></script>
     <script>
         let config = null;
+        let ordenacaoAtual = { campo: 'data', direcao: 'desc' }; // Ordenação padrão: Data decrescente
 
         // Função para definir data atual no formato correto
         function setDataAtual() {
@@ -447,6 +470,9 @@
             await carregarTabela();
             carregarEstatisticas();
             await carregarFiltros();
+
+            // Marcar coluna Data como ordenada por padrão
+            document.querySelectorAll('th')[0].classList.add('sorted-desc');
         });
 
         // Verificar se deve mostrar competência ao carregar a página
@@ -608,13 +634,88 @@
             return '-';
         }
 
+        // Função para ordenar tabela
+        async function ordenarTabela(campo) {
+            // Se clicar no mesmo campo, inverte a direção
+            if (ordenacaoAtual.campo === campo) {
+                ordenacaoAtual.direcao = ordenacaoAtual.direcao === 'asc' ? 'desc' : 'asc';
+            } else {
+                // Novo campo, começa com ascendente
+                ordenacaoAtual.campo = campo;
+                ordenacaoAtual.direcao = 'asc';
+            }
+
+            // Atualizar indicadores visuais dos cabeçalhos
+            document.querySelectorAll('th').forEach(th => {
+                th.classList.remove('sorted-asc', 'sorted-desc');
+            });
+
+            const thAtual = event.target;
+            thAtual.classList.add(ordenacaoAtual.direcao === 'asc' ? 'sorted-asc' : 'sorted-desc');
+
+            // Recarregar tabela com nova ordenação
+            await filtrarTabela();
+        }
+
+        // Obter valor de vencimento para ordenação
+        function obterValorVencimento(lancamento) {
+            if (lancamento.competenciaFatura) {
+                return lancamento.competenciaFatura;
+            }
+            if (lancamento.dataVencimento) {
+                return lancamento.dataVencimento;
+            }
+            return lancamento.data;
+        }
+
         // Carregar tabela
         async function carregarTabela(filtrados = null) {
             const lancamentos = filtrados || obterLancamentos();
             const tbody = document.getElementById('corpoTabela');
             tbody.innerHTML = '';
 
-            lancamentos.sort((a, b) => new Date(b.data) - new Date(a.data));
+            // Aplicar ordenação baseada no campo selecionado
+            lancamentos.sort((a, b) => {
+                let valorA, valorB;
+
+                switch(ordenacaoAtual.campo) {
+                    case 'data':
+                        valorA = new Date(a.data);
+                        valorB = new Date(b.data);
+                        break;
+                    case 'descricao':
+                        valorA = a.descricao.toLowerCase();
+                        valorB = b.descricao.toLowerCase();
+                        break;
+                    case 'categoria':
+                        valorA = a.categoriaId;
+                        valorB = b.categoriaId;
+                        break;
+                    case 'vencimento':
+                        valorA = new Date(obterValorVencimento(a));
+                        valorB = new Date(obterValorVencimento(b));
+                        break;
+                    case 'valor':
+                        valorA = a.valor;
+                        valorB = b.valor;
+                        break;
+                    case 'tipo':
+                        valorA = a.tipoId;
+                        valorB = b.tipoId;
+                        break;
+                    case 'status':
+                        valorA = a.statusId;
+                        valorB = b.statusId;
+                        break;
+                    default:
+                        valorA = new Date(a.data);
+                        valorB = new Date(b.data);
+                }
+
+                if (valorA < valorB) return ordenacaoAtual.direcao === 'asc' ? -1 : 1;
+                if (valorA > valorB) return ordenacaoAtual.direcao === 'asc' ? 1 : -1;
+                return 0;
+            });
 
             for (const l of lancamentos) {
                 const categoria = await obterCategoriaPorId(l.categoriaId);
