@@ -669,7 +669,17 @@
                 lancamentos = lancamentos.filter(l => l.statusId == statusId);
             }
             if (mes) {
-                lancamentos = lancamentos.filter(l => l.data.startsWith(mes));
+                // Filtra por competenciaFatura ou dataVencimento (não por data)
+                lancamentos = lancamentos.filter(l => {
+                    if (l.competenciaFatura) {
+                        return l.competenciaFatura.startsWith(mes);
+                    }
+                    if (l.dataVencimento) {
+                        return l.dataVencimento.startsWith(mes);
+                    }
+                    // Fallback: se não tiver nem competenciaFatura nem dataVencimento, usa data
+                    return l.data.startsWith(mes);
+                });
             }
 
             await carregarTabela(lancamentos);
