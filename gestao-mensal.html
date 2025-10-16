@@ -367,24 +367,24 @@
                 <div class="card-resumo receber">
                     <h3>💰 A Receber</h3>
                     <p id="totalReceber">R$ 0,00</p>
-                    <small id="qtdReceber">0 lançamentos</small>
+                    <small id="qtdReceber">0 pendentes</small>
                 </div>
                 <div class="card-resumo pagar">
                     <h3>💸 A Pagar</h3>
                     <p id="totalPagar">R$ 0,00</p>
-                    <small id="qtdPagar">0 lançamentos</small>
+                    <small id="qtdPagar">0 pendentes</small>
                 </div>
                 <div class="card-resumo saldo">
-                    <h3>💎 Saldo Previsto</h3>
+                    <h3>💎 Saldo do Mês</h3>
                     <p id="saldoPrevisto">R$ 0,00</p>
-                    <small>Receitas - Despesas</small>
+                    <small id="saldoDescricao">Receitas - Despesas</small>
                 </div>
             </div>
 
-            <!-- Seção: Receitas a Receber -->
+            <!-- Seção: Receitas -->
             <div class="secao">
                 <div class="secao-header receber">
-                    <h2 class="receber">💰 Receitas a Receber</h2>
+                    <h2 class="receber">💰 Receitas do Mês</h2>
                     <span class="total" style="color: #4CAF50;" id="totalReceberTexto">R$ 0,00</span>
                 </div>
                 <div class="lista-items" id="listaReceber">
@@ -392,10 +392,10 @@
                 </div>
             </div>
 
-            <!-- Seção: Despesas a Pagar -->
+            <!-- Seção: Despesas -->
             <div class="secao">
                 <div class="secao-header pagar">
-                    <h2 class="pagar">💸 Despesas a Pagar</h2>
+                    <h2 class="pagar">💸 Despesas do Mês</h2>
                     <span class="total" style="color: #f44336;" id="totalPagarTexto">R$ 0,00</span>
                 </div>
                 <div class="lista-items" id="listaPagar">
@@ -461,13 +461,23 @@
             document.getElementById('totalPagar').textContent = formatarReal(totalPagar);
             document.getElementById('qtdPagar').textContent = `${despesasNaoPagas.length} pendente${despesasNaoPagas.length !== 1 ? 's' : ''}`;
 
-            document.getElementById('saldoPrevisto').textContent = formatarReal(saldoPrevisto);
-            document.getElementById('saldoPrevisto').style.color = saldoPrevisto >= 0 ? '#4CAF50' : '#f44336';
-
-            // Atualizar totais nas seções (total de TODOS os lançamentos)
+            // Calcular saldo GERAL do mês (todos os lançamentos)
             const totalGeralReceitas = receitas.reduce((sum, l) => sum + l.valor, 0);
             const totalGeralDespesas = despesas.reduce((sum, l) => sum + Math.abs(l.valor), 0);
+            const saldoGeral = totalGeralReceitas - totalGeralDespesas;
 
+            // Card de saldo mostra o saldo GERAL do mês
+            document.getElementById('saldoPrevisto').textContent = formatarReal(saldoGeral);
+            document.getElementById('saldoPrevisto').style.color = saldoGeral >= 0 ? '#4CAF50' : '#f44336';
+
+            // Atualizar descrição do card baseado se tem pendentes
+            if (receitasNaoPagas.length > 0 || despesasNaoPagas.length > 0) {
+                document.getElementById('saldoDescricao').textContent = `Saldo geral (${receitasNaoPagas.length + despesasNaoPagas.length} pendente${(receitasNaoPagas.length + despesasNaoPagas.length) !== 1 ? 's' : ''})`;
+            } else {
+                document.getElementById('saldoDescricao').textContent = 'Tudo pago no mês!';
+            }
+
+            // Atualizar totais nas seções (total de TODOS os lançamentos)
             document.getElementById('totalReceberTexto').textContent = formatarReal(totalGeralReceitas);
             document.getElementById('totalPagarTexto').textContent = formatarReal(totalGeralDespesas);
 
