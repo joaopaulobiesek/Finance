@@ -428,7 +428,6 @@
             }
 
             const lancamentos = obterLancamentos();
-            console.log('Total de lançamentos:', lancamentos.length);
 
             // Filtrar lançamentos do mês (usa competenciaFatura ou dataVencimento)
             const lancamentosMes = lancamentos.filter(l => {
@@ -436,15 +435,9 @@
                 return competencia.startsWith(mesSelecionado);
             });
 
-            console.log('Lançamentos do mês ' + mesSelecionado + ':', lancamentosMes.length);
-            console.log('Lançamentos do mês:', lancamentosMes);
-
             // Separar TODAS as receitas e despesas do mês (independente do status)
             const receitas = lancamentosMes.filter(l => l.valor > 0);
             const despesas = lancamentosMes.filter(l => l.valor < 0);
-
-            console.log('Todas as receitas:', receitas);
-            console.log('Todas as despesas:', despesas);
 
             // Calcular totais APENAS NÃO PAGOS para os cards de resumo
             const receitasNaoPagas = receitas.filter(l => l.statusId === 2 || l.statusId === 3);

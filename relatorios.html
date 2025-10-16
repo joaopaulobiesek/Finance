@@ -419,15 +419,10 @@
         }
 
         async function carregarDespesasPorCategoria(lancamentos) {
-            console.log('📊 Carregando despesas por categoria...');
-            console.log('Total de lançamentos recebidos:', lancamentos.length);
-            
             const porCategoria = {};
-            
+
             // Filtrar apenas despesas (valor negativo)
             const despesas = lancamentos.filter(l => l.valor < 0);
-            console.log('Despesas encontradas (valor < 0):', despesas.length);
-            console.log('Despesas:', despesas);
             
             for (const l of despesas) {
                 const categoria = await obterCategoriaPorId(l.categoriaId);
@@ -443,15 +438,12 @@
                 porCategoria[nomeCategoria].quantidade++;
             }
 
-            console.log('Categorias agrupadas:', porCategoria);
-
             const categorias = Object.entries(porCategoria)
                 .sort((a, b) => b[1].total - a[1].total);
 
             const container = document.getElementById('categoriasContent');
 
             if (categorias.length === 0) {
-                console.log('⚠️ Nenhuma categoria encontrada!');
                 container.innerHTML = '<div class="sem-dados">Nenhuma despesa registrada</div>';
                 return;
             }
