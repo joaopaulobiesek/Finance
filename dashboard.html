@@ -357,7 +357,7 @@
             criarGraficoEvolucao();
 
             // Resumo textual
-            gerarResumoTextual(receitas, despesas, saldo, gastosPessoais, totalNaoPago);
+            await gerarResumoTextual(receitas, despesas, saldo, gastosPessoais, totalNaoPago);
         }
 
         async function carregarAlertas(saldo, gastosPessoais, totalNaoPago) {
@@ -375,8 +375,14 @@
                 alertas.push(`Despesas pessoais de R$ ${formatarReal(gastosPessoais)} - considere estabelecer um limite mensal!`);
             }
 
+            // Calcular empréstimo dos lançamentos categoria 11 (Despesa - Empréstimo)
+            const lancamentos = obterLancamentos();
+            const emprestimo = lancamentos
+                .filter(l => l.categoriaId === 11 && l.statusId === 1)
+                .reduce((total, l) => total + Math.abs(l.valor), 0);
+
             const receitas = calcularTotalReceitas(1);
-            if (receitas > 0 && (7000 / receitas) > 0.3) {
+            if (receitas > 0 && emprestimo > 0 && (emprestimo / receitas) > 0.3) {
                 alertas.push('Empréstimo comprometendo mais de 30% do faturamento!');
             }
 
@@ -567,8 +573,13 @@
             });
         }
 
-        function gerarResumoTextual(receitas, despesas, saldo, gastosPessoais, totalNaoPago) {
-            const emprestimo = 7000;
+        async function gerarResumoTextual(receitas, despesas, saldo, gastosPessoais, totalNaoPago) {
+            // Calcular valor do empréstimo baseado nos lançamentos da categoria "Despesa - Empréstimo" (ID 11)
+            const lancamentos = obterLancamentos();
+            const emprestimo = lancamentos
+                .filter(l => l.categoriaId === 11 && l.statusId === 1) // Categoria Empréstimo e Pago
+                .reduce((total, l) => total + Math.abs(l.valor), 0);
+
             const faturamentoEsperado = 28000;
             
             let texto = '';

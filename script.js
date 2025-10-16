@@ -91,13 +91,6 @@ const dadosIniciais = {
         nome: "Wiesoo",
         faturamentoMedio: 28000
     },
-    emprestimo: {
-        valorTotal: 0,
-        parcelaMensal: 7000,
-        numeroParcelas: 0,
-        parcelasPagas: 0,
-        historico: []
-    },
     lancamentos: [],
     proximoId: 1
 };
@@ -546,30 +539,6 @@ function calcularTotalAReceber() {
     return lancamentos
         .filter(l => l.statusId === 2 && l.valor > 0)
         .reduce((total, l) => total + l.valor, 0);
-}
-
-// ====================================
-// FUNÇÕES DE EMPRÉSTIMO
-// ====================================
-
-// Atualizar dados do empréstimo
-function atualizarEmprestimo(dadosEmprestimo) {
-    const dados = carregarDados();
-    dados.emprestimo = { ...dados.emprestimo, ...dadosEmprestimo };
-    salvarDados(dados);
-}
-
-// Adicionar pagamento no histórico
-function adicionarPagamentoEmprestimo(pagamento) {
-    const dados = carregarDados();
-    dados.emprestimo.historico.push(pagamento);
-    salvarDados(dados);
-}
-
-// Obter dados do empréstimo
-function obterEmprestimo() {
-    const dados = carregarDados();
-    return dados.emprestimo;
 }
 
 // ====================================
